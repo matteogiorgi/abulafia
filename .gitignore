@@ -1,1 +1,6 @@
 **/tags
+
+# Build artifacts
+/abulafia
+*.o
+*.obj
