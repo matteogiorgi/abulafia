@@ -92,7 +92,7 @@ Type `exit` or `quit` (or send EOF, e.g. Ctrl-D) to leave.
 
 ## Test corpus
 
-[`moby.txt`](moby.txt) is the full text of *Moby-Dick; or, The Whale* by Herman Melville, downloaded from [Project Gutenberg](https://www.gutenberg.org/ebooks/2701) (public domain) and kept in the repo as a ready-to-use, sufficiently large corpus for trying out and demoing the chain (~216k words, ~1.2 MB). A small input produces answers that closely echo the source almost verbatim, since few alternative continuations exist at each step; a corpus this size gives the chain enough alternatives per word pair to produce noticeably more varied, novel-sounding sentences.
+[`moby.txt`](https://github.com/matteogiorgi/abulafia/blob/main/moby.txt) is the full text of *Moby-Dick; or, The Whale* by Herman Melville, downloaded from [Project Gutenberg](https://en.wikipedia.org/wiki/Project_Gutenberg) (public domain) and kept in the repo as a ready-to-use, sufficiently large corpus for trying out and demoing the chain (~216k words, ~1.2 MB). A small input produces answers that closely echo the source almost verbatim, since few alternative continuations exist at each step; a corpus this size gives the chain enough alternatives per word pair to produce noticeably more varied, novel-sounding sentences.
 
 Try it with:
 
@@ -105,7 +105,7 @@ make run FILE=moby.txt
 
 ## Implementation details
 
-The whole program lives in a single file, [abulafia.c](abulafia.c).
+The whole program lives in a single file, [abulafia.c](https://github.com/matteogiorgi/abulafia/blob/main/abulafia.c).
 
 - **Tokenization.** The input file is split on whitespace only (`fscanf(f, "%s", ...)`). Punctuation stays attached to the word it follows (e.g. `"casa."` is one token), which is a cheap way to later detect sentence boundaries without a separate parsing pass.
 
