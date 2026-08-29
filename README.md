@@ -1,4 +1,4 @@
-# Abulafia: a Markov chain text generator
+# Abulafia: a Markov-Chain text generator
 
 A small C program that reads a `.txt` file, builds a Markov chain from it, and uses that chain to answer questions typed interactively by the user with generated, plausible-sounding sentences.
 
