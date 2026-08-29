@@ -1,0 +1,3 @@
+kramdown:
+    # straight quotes required by MathJax for f' f'' etc. inside $...$
+    smart_quotes: ["apos", "apos", "quot", "quot"]

@@ -8,6 +8,11 @@
  * Usage: ./abulafia corpus.txt
  */
 
+ /* strdup() is POSIX, not standard C - this feature-test macro exposes it
+  * even when compiling with a strict -std=c11 (as opposed to gnu11). Must
+  * be defined before any system header is included. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,13 +26,13 @@
 #define GEN_MAX_WORDS    40  /* hard cap on generated words, in case the chain loops forever */
 #define MAX_CANDIDATES  256  /* max number of matching chain entries considered when seeding a reply */
 
- /*
-  * One node of the Markov chain: the key is the word pair (w1, w2), and
-  * "nexts" is the list of words that were observed to follow that pair in
-  * the source text. A word can appear multiple times in "nexts" - that
-  * repetition is what gives more frequent transitions a higher probability
-  * of being picked during generation.
-  */
+  /*
+   * One node of the Markov chain: the key is the word pair (w1, w2), and
+   * "nexts" is the list of words that were observed to follow that pair in
+   * the source text. A word can appear multiple times in "nexts" - that
+   * repetition is what gives more frequent transitions a higher probability
+   * of being picked during generation.
+   */
 typedef struct Entry {
     char *w1, *w2;
     char **nexts;
@@ -132,7 +137,7 @@ static void to_lower_clean(const char *src, char *dst, size_t dstsize) {
 static void load_file(const char *path) {
     FILE *f = fopen(path, "r");
     if (!f) {
-        fprintf(stderr, "Impossibile aprire il file '%s'\n", path);
+        fprintf(stderr, "Cannot open file '%s'\n", path);
         exit(1);
     }
     char buf[MAX_LINE];
@@ -213,7 +218,7 @@ static Entry *pick_seed(const char *question) {
  */
 static void generate_answer(const char *question) {
     if (n_entries == 0) {
-        printf("Non ho abbastanza testo per rispondere.\n");
+        printf("Not enough text to generate an answer.\n");
         return;
     }
     Entry *cur = pick_seed(question);
@@ -249,7 +254,7 @@ static void generate_answer(const char *question) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "Uso: %s <file.txt>\n", argv[0]);
+        fprintf(stderr, "Usage: %s <file.txt>\n", argv[0]);
         return 1;
     }
 
@@ -257,19 +262,19 @@ int main(int argc, char **argv) {
     load_file(argv[1]);
 
     if (n_tokens < 3) {
-        fprintf(stderr, "Il file contiene troppo poco testo per costruire una catena.\n");
+        fprintf(stderr, "The file doesn't contain enough text to build a chain.\n");
         return 1;
     }
     build_chain();
 
-    printf("Catena di Markov pronta (%d parole, %d coppie uniche).\n", n_tokens, n_entries);
-    printf("Fai una domanda (scrivi 'exit' per uscire):\n");
+    printf("Markov chain ready (%d words, %d unique pairs).\n", n_tokens, n_entries);
+    printf("Ask a question (type 'exit' to quit):\n");
 
     /* Main interactive loop: read a question, generate and print an
      * answer, repeat until the user types "exit"/"quit" or closes stdin. */
     char line[MAX_LINE];
     while (1) {
-        printf("\nTu: ");
+        printf("\nYou: ");
         fflush(stdout);
         if (!fgets(line, sizeof(line), stdin)) break;
         line[strcspn(line, "\n")] = '\0'; /* strip the trailing newline */
