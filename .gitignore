@@ -4,3 +4,6 @@
 /abulafia
 *.o
 *.obj
+
+# Editor backup files
+*~

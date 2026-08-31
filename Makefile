@@ -3,6 +3,7 @@
 # Targets:
 #   make          build the "abulafia" executable (default target)
 #   make run      build (if needed) and launch it against FILE
+#   make test     build (if needed) and run the test suite
 #   make clean    remove build artifacts
 
 CC     := gcc
@@ -16,7 +17,7 @@ SRC    := abulafia.c
 FILE ?= corpus.txt
 
 # Targets that don't correspond to actual files with that name.
-.PHONY: all run clean
+.PHONY: all run test clean
 
 # Default target: just build the executable.
 all: $(TARGET)
@@ -29,6 +30,11 @@ $(TARGET): $(SRC)
 # Build (if needed) and start the interactive chatbot on $(FILE).
 run: $(TARGET)
 	./$(TARGET) $(FILE)
+
+# Run the invariant test suite (see tests/run_tests.sh); it builds the
+# executable itself, so no explicit dependency on $(TARGET) here.
+test:
+	./tests/run_tests.sh
 
 # Remove the compiled binary.
 clean:

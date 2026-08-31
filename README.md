@@ -61,6 +61,17 @@ make clean
 
 
 
+## Testing
+
+```bash
+make test
+```
+
+Runs [`tests/run_tests.sh`](tests/run_tests.sh) against a small fixed corpus ([`tests/mini_corpus.txt`](tests/mini_corpus.txt)). Since the generated output is randomized, the suite checks invariants rather than exact transcripts: every word in a generated answer must belong to the corpus vocabulary (which would catch a memory or tokenization bug), and edge cases (empty file, too-short file, nonexistent file, `exit`/`quit`/EOF) exit with the expected status.
+
+
+
+
 ## Usage
 
 ```bash
@@ -113,7 +124,7 @@ The whole program lives in a single file, [abulafia.c](https://github.com/matteo
 
 - **Storage.** Pairs are kept in a fixed-size hash table (`HASH_SIZE` buckets) with separate chaining, using the djb2 string hash combined for both words. A flat array of every distinct pair (`all_entries`) is kept alongside the table so the program can pick a uniformly random pair without walking the whole table.
 
-- **Answering a question.** `pick_seed()` splits the question into words and looks for one that matches the first word of some known pair in the chain (case-insensitive, punctuation-stripped comparison); if several match, one is chosen at random, which loosely ties the reply to the question's topic. If no word matches anything in the chain, a uniformly random pair is used instead, so the program always produces some output.
+- **Answering a question.** `pick_seed()` splits the question into words and looks for one that matches the first word of some known pair in the chain (case-insensitive, punctuation-stripped comparison); if several match, one is chosen at random, which loosely ties the reply to the question's topic. If no word matches anything in the chain, a uniformly random pair is used instead, so the program always produces some output. The matching itself goes through a second hash table (`word_index`, built once after the chain) keyed by cleaned first word, so each question word is resolved in roughly constant time instead of scanning every chain entry.
 
 - **Generation.** Starting from the seed pair, `generate_answer()` repeatedly looks up the current pair's list of possible next words, picks one at random, prints it, and slides the pair forward by one word (`w1, w2 -> w2, next`). Generation stops when: the current pair has no recorded continuation (a "dead end" in the chain), a word ending in `.`, `?` or `!` is produced (once at least `GEN_MIN_WORDS` words have been emitted), or `GEN_MAX_WORDS` is reached as a safety cap.
 
@@ -131,6 +142,6 @@ The whole program lives in a single file, [abulafia.c](https://github.com/matteo
 - [ ] Support loading multiple input files to build a combined chain.
 - [ ] Save/load a previously built chain to/from disk, to skip re-parsing large corpora on every run.
 - [ ] Proper Unicode-aware tokenization/case-folding (currently relies on `<ctype.h>`, which is locale- and byte-oriented, not UTF-8 aware).
-- [ ] Replace the linear scan over `all_entries` in `pick_seed()` with a direct hash lookup keyed by first word, for better performance on large corpora.
+- [x] Replace the linear scan over `all_entries` in `pick_seed()` with a direct hash lookup keyed by first word, for better performance on large corpora.
 - [ ] Free allocated memory on exit (mainly relevant if the program were turned into a long-running service instead of a one-shot CLI).
-- [ ] Basic automated tests (e.g. feed a small fixed corpus and check that generated output only ever uses known transitions).
+- [x] Basic automated tests (e.g. feed a small fixed corpus and check that generated output only ever uses known transitions).
