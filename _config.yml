@@ -1,3 +1,6 @@
+remote_theme: matteogiorgi/matteogiorgi.github.io
+plugins:
+  - jekyll-seo-tag
+
 kramdown:
-    # straight quotes required by MathJax for f' f'' etc. inside $...$
-    smart_quotes: ["apos", "apos", "quot", "quot"]
+  smart_quotes: ["apos", "apos", "quot", "quot"]
